@@ -1,0 +1,22 @@
+---
+#Play to update and upgrade package on all group
+- name: Update and upgrade package
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update and upgrade package
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+
+
+#Play to install apache 2 on web group
+- name: Install apache2
+  hosts: web
+  become: yes
+  tasks:
+    - name: Install apache2
+      apt:
+        name: apache2
+        state: present
