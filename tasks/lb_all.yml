@@ -1,2 +1,29 @@
 ---
-- name:
+- name: Configure Apache2
+  hosts: lb
+  become: yes
+  tasks:
+    - name: install apache2 package
+      apt:
+        name: apache2
+        state: present
+    - name: install apache modules
+      apache2_module:
+        name: "{{ item }}"
+        state: present
+      loop:
+      - proxy_http
+      - proxy_http2
+      - proxy_balancer
+      - lbmethod_byrequests
+    - name: create conf file
+      template:
+        src: ../templates/lb-apache-conf.j2
+        dest: /etc/apache2/sites-available/000-default.conf
+        owner: www-data
+        group: www-data
+        mode: 0644
+    - name: restart apache2 service
+      service: 
+        name: apache2
+        state: restarted
