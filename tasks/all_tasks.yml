@@ -1,0 +1,8 @@
+---
+#Play to import task from set_dns.yml
+- name: Set DNS nameserver
+  hosts: all
+  become: yes
+  tasks:
+    - name: Import task from set_dns.yml
+      import_tasks: set_dns.yml

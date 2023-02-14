@@ -1,0 +1,18 @@
+$ORIGIN {{ domaine_lab }}.
+$TTL 3600
+
+@   3600  IN  SOA   {{ groups['dns']|first }}.{{ domaine_lab }}.   nsmaster.{{ domaine_lab }}. (
+                                {{ timestamp.stdout }} ; serial
+                                1800 ; refresh  
+                                600 ; retry
+                                86400 ; expire
+                                1800 ; negative ttl
+                            )
+
+{% for entry in groups['dns'] -%}                  
+@            IN  NS    {{ entry }}.{{ domaine_lab }}.
+{% endfor %}
+
+{% for entry in groups['all'] -%}
+{{ entry }}        IN  A    {{ hostvars[entry]['ansible_host'] }}
+{% endfor %}

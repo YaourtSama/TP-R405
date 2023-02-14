@@ -1,0 +1,30 @@
+---
+#Play to install bind9 on dns hosts
+- name: Install bind9
+  hosts: dns
+  become: yes
+  tasks:
+    - name: Install bind9
+      apt:
+        name: bind9
+        state: present
+    - name: Register timestamp
+      shell: "date +%s"
+      register: timestamp
+      run_once: true
+    - name: Create DNS zone file
+      template: 
+        src: template.j2
+        dest: /etc/bind/db.{{ domaine_lab }}
+        owner: bind
+        group: bind
+    - name: Change named.conf.local conf
+      blockinfile:
+        path: /etc/bind/named.conf.local
+        backup: true 
+        state: present
+        block: |
+          zone "{{ domaine_lab }}" {
+            type master;
+            file "/etc/bind/zones/db.{{ domaine_lab }}";
+          };
